@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Pressable, Dimensions, Modal, TouchableWithoutFeedback } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Pressable,
+  Dimensions,
+  Modal,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import Theme from './theme';
 import { CrossPlatformPressableStateCallbackType } from './types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Logo from './icons/Logo';
 import BurgerIcon from './icons/BurgerIcon';
+import { useNavigation } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
+import type { RootStackParamList } from './App';
 
 const MENU_OPTIONS = ['Home', 'Courses', 'Practice', 'Progress', 'Settings'];
 const MOBILE_BREAKPOINT = 900;
 
 function TopMenu() {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [menuOpen, setMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(Dimensions.get('window').width);
 
@@ -28,12 +42,12 @@ function TopMenu() {
   const isMobile = windowWidth < MOBILE_BREAKPOINT;
 
   function renderMenuItems(vertical = false) {
-    return MENU_OPTIONS.map(option => (
+    return MENU_OPTIONS.map((option) => (
       <Pressable
         key={option}
         style={(state: CrossPlatformPressableStateCallbackType) => [
           vertical ? styles.menuItemVertical : styles.menuItem,
-          state.hovered && (vertical ? styles.menuItemVerticalHovered : styles.menuItemHovered)
+          state.hovered && (vertical ? styles.menuItemVerticalHovered : styles.menuItemHovered),
         ]}
         onPress={() => setMenuOpen(false)}
       >
@@ -58,8 +72,9 @@ function TopMenu() {
           <Pressable
             style={(state: CrossPlatformPressableStateCallbackType) => [
               styles.loginButton,
-              state.hovered && { backgroundColor: Theme.colors.primaryLight }
+              state.hovered && { backgroundColor: Theme.colors.primaryLight },
             ]}
+            onPress={() => navigation.navigate('Login')}
           >
             <Text style={styles.loginText}>Login</Text>
           </Pressable>
@@ -74,9 +89,7 @@ function TopMenu() {
           <TouchableWithoutFeedback onPress={() => setMenuOpen(false)}>
             <View style={styles.modalOverlay} />
           </TouchableWithoutFeedback>
-          <View style={styles.mobileMenuModal}>
-            {renderMenuItems(true)}
-          </View>
+          <View style={styles.mobileMenuModal}>{renderMenuItems(true)}</View>
         </Modal>
       </View>
     );
@@ -95,8 +108,9 @@ function TopMenu() {
         <Pressable
           style={(state: CrossPlatformPressableStateCallbackType) => [
             styles.loginButton,
-            state.hovered && { backgroundColor: Theme.colors.primaryLight }
+            state.hovered && { backgroundColor: Theme.colors.primaryLight },
           ]}
+          onPress={() => navigation.navigate('Login')}
         >
           <Text style={styles.loginText}>Login</Text>
         </Pressable>
@@ -239,4 +253,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TopMenu; 
+export default TopMenu;

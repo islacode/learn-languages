@@ -1,3 +1,5 @@
 import { PressableStateCallbackType } from 'react-native';
 
-export type CrossPlatformPressableStateCallbackType = PressableStateCallbackType & { hovered?: boolean }; 
+export type CrossPlatformPressableStateCallbackType = PressableStateCallbackType & {
+  hovered?: boolean;
+};
