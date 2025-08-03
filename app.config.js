@@ -8,6 +8,7 @@ export default ({ config }) => {
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
     newArchEnabled: true,
+    scheme: "learn-languages",
     splash: {
       image: "./assets/splash-icon.png",
       resizeMode: "contain",
@@ -37,4 +38,4 @@ export default ({ config }) => {
       SUPABASE_PUBLISHABLE_KEY: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     },
   };
-}; 
+};
