@@ -11,4 +11,6 @@ export const SESSION_TIMEOUT_MINUTES = 60;
 export const SESSION_TIMEOUT_MILLISECONDS = SESSION_TIMEOUT_MINUTES * 60 * 1000;
 
 // Cookie names
-export const USER_SESSION_COOKIE = 'userSession'; 
+export const USER_SESSION_COOKIE = 'userSession';
+
+ 

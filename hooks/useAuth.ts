@@ -4,6 +4,7 @@ import { supabase } from '../supabase';
 import { useGoogleOAuth } from './useGoogleOAuth';
 import { useSession } from './useSession';
 
+
 interface UserSession {
   id: string;
   googleId: string;
@@ -25,7 +26,6 @@ export const useAuth = () => {
       const error = urlParams.get('error');
       
       if (code) {
-        console.log('Received OAuth code:', code);
         handleOAuthCallback(code);
       } else if (error) {
         console.error('OAuth error:', error);
@@ -70,7 +70,7 @@ export const useAuth = () => {
           client_secret: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_SECRET!,
           code: code,
           grant_type: 'authorization_code',
-          redirect_uri: process.env.EXPO_PUBLIC_WEB_REDIRECT_URL!,
+          redirect_uri: `${window.location.origin}${process.env.EXPO_PUBLIC_AUTH_REDIRECT_URL}`,
         }),
       });
 
@@ -79,7 +79,6 @@ export const useAuth = () => {
       }
 
       const tokenData = await tokenResponse.json();
-      console.log('Token response:', tokenData);
 
       // Get user info and proceed with login
       await handleGoogleSignInSuccess(tokenData.access_token);
@@ -146,11 +145,9 @@ export const useAuth = () => {
       
       // Get user info from Google
       const userInfo = await getGoogleUserInfo(accessToken);
-      console.log('Google user info:', userInfo);
 
       // Save user to database
       const savedUser = await saveUserToDatabase(userInfo);
-      console.log('User saved to database:', savedUser);
 
       // Create session
       const sessionData: UserSession = {
@@ -163,7 +160,6 @@ export const useAuth = () => {
 
       // Save session
       await saveSession(sessionData);
-      console.log('Session saved, current session state:', sessionData);
       
       Alert.alert('Success!', 'You have been logged in successfully.');
       

@@ -22,8 +22,7 @@ function TopMenu() {
   const { session, loading, login, logout, isAuthenticated } = useAuth();
   const { windowWidth, menuOpen, toggleMenu, closeMenu } = useResponsiveMenu();
   
-  console.log('TopMenu - session:', session);
-  console.log('TopMenu - isAuthenticated:', isAuthenticated);
+
   
   const isMobile = windowWidth < MOBILE_BREAKPOINT;
 
@@ -43,12 +42,9 @@ function TopMenu() {
   }
 
   const handleAuthPress = () => {
-    console.log('Auth button pressed, isAuthenticated:', isAuthenticated);
     if (isAuthenticated) {
-      console.log('Calling logout function');
       logout();
     } else {
-      console.log('Calling login function');
       login();
     }
   };

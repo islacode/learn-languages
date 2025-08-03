@@ -37,16 +37,13 @@ export const useSession = () => {
   };
 
   const checkExistingSession = async () => {
-    console.log('checkExistingSession called');
     try {
       let sessionData: string | null = null;
       
       if (Platform.OS === 'web') {
         sessionData = getCookie(USER_SESSION_COOKIE);
-        console.log('Web: Found session data in cookie:', sessionData);
       } else {
         sessionData = await SecureStore.getItemAsync(USER_SESSION_COOKIE);
-        console.log('Mobile: Found session data in SecureStore:', sessionData);
       }
 
       if (sessionData) {
@@ -64,14 +61,10 @@ export const useSession = () => {
           } else {
             await SecureStore.deleteItemAsync(USER_SESSION_COOKIE);
           }
-          console.log('Session expired due to inactivity');
           return;
         }
 
         setSession(session);
-        console.log('User already logged in:', session);
-      } else {
-        console.log('No existing session found');
       }
     } catch (error) {
       console.error('Error checking session:', error);
@@ -88,24 +81,17 @@ export const useSession = () => {
   };
 
   const clearSession = async () => {
-    console.log('clearSession called');
     if (Platform.OS === 'web') {
-      console.log('Deleting cookie:', USER_SESSION_COOKIE);
       deleteCookie(USER_SESSION_COOKIE);
-      console.log('Cookie deleted, checking if it exists:', getCookie(USER_SESSION_COOKIE));
     } else {
       await SecureStore.deleteItemAsync(USER_SESSION_COOKIE);
     }
     setSession(null);
-    console.log('Session state set to null');
   };
 
   const handleSignOut = async () => {
-    console.log('handleSignOut called');
     try {
-      console.log('Clearing session...');
       await clearSession();
-      console.log('User signed out successfully');
       Alert.alert('Signed out', 'You have been signed out successfully.');
     } catch (error) {
       console.error('Error signing out:', error);
