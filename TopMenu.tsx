@@ -1,53 +1,60 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Pressable, Dimensions, Modal, TouchableWithoutFeedback } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Pressable,
+  Modal,
+  TouchableWithoutFeedback,
+  ActivityIndicator,
+} from 'react-native';
 import Theme from './theme';
 import { CrossPlatformPressableStateCallbackType } from './types';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Logo from './icons/Logo';
 import BurgerIcon from './icons/BurgerIcon';
-
-const MENU_OPTIONS = ['Home', 'Courses', 'Practice', 'Progress', 'Settings'];
-const MOBILE_BREAKPOINT = 900;
+import { useAuth } from './hooks/useAuth';
+import { useResponsiveMenu } from './hooks/useResponsiveMenu';
+import { MENU_OPTIONS, MOBILE_BREAKPOINT } from './constants';
 
 function TopMenu() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(Dimensions.get('window').width);
+  const { session, loading, login, logout, isAuthenticated } = useAuth();
+  const { windowWidth, menuOpen, toggleMenu, closeMenu } = useResponsiveMenu();
+  
 
-  React.useEffect(() => {
-    function handleResize() {
-      setWindowWidth(Dimensions.get('window').width);
-    }
-    const subscription = Dimensions.addEventListener('change', handleResize);
-    return () => {
-      if (subscription && typeof subscription.remove === 'function') {
-        subscription.remove();
-      }
-    };
-  }, []);
-
+  
   const isMobile = windowWidth < MOBILE_BREAKPOINT;
 
   function renderMenuItems(vertical = false) {
-    return MENU_OPTIONS.map(option => (
+    return MENU_OPTIONS.map((option) => (
       <Pressable
         key={option}
         style={(state: CrossPlatformPressableStateCallbackType) => [
           vertical ? styles.menuItemVertical : styles.menuItem,
-          state.hovered && (vertical ? styles.menuItemVerticalHovered : styles.menuItemHovered)
+          state.hovered && (vertical ? styles.menuItemVerticalHovered : styles.menuItemHovered),
         ]}
-        onPress={() => setMenuOpen(false)}
+        onPress={closeMenu}
       >
         <Text style={styles.menuText}>{option}</Text>
       </Pressable>
     ));
   }
 
+  const handleAuthPress = () => {
+    if (isAuthenticated) {
+      logout();
+    } else {
+      login();
+    }
+  };
+
   if (isMobile) {
     // Mobile: burger left, logo center, login right
     return (
       <View style={styles.menuContainer}>
         <View style={styles.mobileLeft}>
-          <TouchableOpacity onPress={() => setMenuOpen(true)} style={styles.burgerButton}>
+          <TouchableOpacity onPress={toggleMenu} style={styles.burgerButton}>
             <BurgerIcon />
           </TouchableOpacity>
         </View>
@@ -55,28 +62,40 @@ function TopMenu() {
           <Logo size={36} />
         </View>
         <View style={styles.mobileRight}>
-          <Pressable
-            style={(state: CrossPlatformPressableStateCallbackType) => [
-              styles.loginButton,
-              state.hovered && { backgroundColor: Theme.colors.primaryLight }
-            ]}
+          {loading ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : isAuthenticated ? (
+                      <Pressable
+            style={styles.signOutButton}
+            onPress={handleAuthPress}
           >
-            <Text style={styles.loginText}>Login</Text>
-          </Pressable>
+              <Text style={styles.signOutButtonText}>Sign Out</Text>
+            </Pressable>
+          ) : (
+            <TouchableOpacity
+              style={styles.googleButton}
+              onPress={handleAuthPress}
+            >
+              <View style={styles.buttonContent}>
+                <View style={styles.googleIcon}>
+                  <Text style={styles.googleIconText}>G</Text>
+                </View>
+                <Text style={styles.buttonText}>Sign in with Google</Text>
+              </View>
+            </TouchableOpacity>
+          )}
         </View>
         {/* Mobile menu modal */}
         <Modal
           visible={menuOpen}
           transparent
           animationType="fade"
-          onRequestClose={() => setMenuOpen(false)}
+                      onRequestClose={closeMenu}
         >
-          <TouchableWithoutFeedback onPress={() => setMenuOpen(false)}>
+          <TouchableWithoutFeedback onPress={closeMenu}>
             <View style={styles.modalOverlay} />
           </TouchableWithoutFeedback>
-          <View style={styles.mobileMenuModal}>
-            {renderMenuItems(true)}
-          </View>
+          <View style={styles.mobileMenuModal}>{renderMenuItems(true)}</View>
         </Modal>
       </View>
     );
@@ -92,14 +111,28 @@ function TopMenu() {
         <View style={styles.menuItemsContainer}>{renderMenuItems(false)}</View>
       </View>
       <View style={styles.webRight}>
-        <Pressable
-          style={(state: CrossPlatformPressableStateCallbackType) => [
-            styles.loginButton,
-            state.hovered && { backgroundColor: Theme.colors.primaryLight }
-          ]}
-        >
-          <Text style={styles.loginText}>Login</Text>
-        </Pressable>
+        {loading ? (
+          <ActivityIndicator size="small" color="white" />
+        ) : isAuthenticated ? (
+          <Pressable
+            style={styles.signOutButton}
+            onPress={handleAuthPress}
+          >
+            <Text style={styles.signOutButtonText}>Sign Out</Text>
+          </Pressable>
+        ) : (
+          <TouchableOpacity
+            style={styles.googleButton}
+            onPress={handleAuthPress}
+          >
+            <View style={styles.buttonContent}>
+              <View style={styles.googleIcon}>
+                <Text style={styles.googleIconText}>G</Text>
+              </View>
+              <Text style={styles.buttonText}>Sign in with Google</Text>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -231,12 +264,59 @@ const styles = StyleSheet.create({
     zIndex: 10,
     borderBottomLeftRadius: Theme.borderRadius.md,
     borderBottomRightRadius: Theme.borderRadius.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  },
+  googleButton: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#dadce0',
+    borderRadius: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    minWidth: 240,
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  googleIcon: {
+    width: 18,
+    height: 18,
+    borderRadius: 2,
+    backgroundColor: '#4285F4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  googleIconText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  buttonText: {
+    color: '#3c4043',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  signOutButton: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#dadce0',
+    borderRadius: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    minWidth: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+  },
+  signOutButtonText: {
+    color: '#3c4043',
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
 
-export default TopMenu; 
+export default TopMenu;

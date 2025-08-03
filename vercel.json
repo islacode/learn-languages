@@ -5,10 +5,9 @@
   "cleanUrls": true,
   "framework": null,
   "rewrites": [
-      {
+    {
       "source": "/:path*",
       "destination": "/"
-      }
+    }
   ]
 }
-  

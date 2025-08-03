@@ -5,7 +5,7 @@ import Theme from './theme';
 function Footer() {
   return (
     <View style={styles.footer}>
-      <Text style={styles.footerText}>© 2024 Learn Languages. All rights reserved.</Text>
+      <Text style={styles.footerText}>© 2025 Learn Languages. All rights reserved.</Text>
     </View>
   );
 }
@@ -24,4 +24,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Footer; 
+export default Footer;
