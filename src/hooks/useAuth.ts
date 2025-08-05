@@ -14,7 +14,7 @@ interface UserSession {
 
 export const useAuth = () => {
   const { loading, setLoading, handleGoogleSignIn, response } = useGoogleOAuth();
-  const { session, saveSession, clearSession, handleSignOut } = useSession();
+  const { session, saveSession, handleSignOut } = useSession();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   // Handle OAuth callback for web redirect flow
@@ -31,6 +31,7 @@ export const useAuth = () => {
         Alert.alert('Login failed', 'OAuth authentication failed.');
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle Expo AuthSession response (only for mobile)
@@ -52,6 +53,7 @@ export const useAuth = () => {
         console.log('OAuth cancelled by user');
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
 
   const handleOAuthCallback = async (code: string) => {

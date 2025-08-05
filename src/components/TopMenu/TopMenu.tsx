@@ -19,7 +19,7 @@ import { useResponsiveMenu } from '../../hooks/useResponsiveMenu';
 import { MENU_OPTIONS, MOBILE_BREAKPOINT } from '../../constants';
 
 function TopMenu() {
-  const { session, loading, login, logout, isAuthenticated } = useAuth();
+  const { loading, login, logout, isAuthenticated } = useAuth();
   const { windowWidth, menuOpen, toggleMenu, closeMenu } = useResponsiveMenu();
 
   const isMobile = windowWidth < MOBILE_BREAKPOINT;

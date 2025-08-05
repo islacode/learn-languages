@@ -107,6 +107,7 @@ export const useSession = () => {
   // Check for existing session on mount
   useEffect(() => {
     checkExistingSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
