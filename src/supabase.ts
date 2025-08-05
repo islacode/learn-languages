@@ -9,4 +9,4 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 console.log('Supabase configuration:', {
   url: supabaseUrl ? 'SET' : 'NOT SET',
   key: supabaseKey ? 'SET' : 'NOT SET',
-}); 
+});

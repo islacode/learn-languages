@@ -24,7 +24,7 @@ export const useAuth = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
       const error = urlParams.get('error');
-      
+
       if (code) {
         handleOAuthCallback(code);
       } else if (error) {
@@ -39,7 +39,7 @@ export const useAuth = () => {
     if (Platform.OS !== 'web' && response) {
       console.log('OAuth response received:', response);
       console.log('Response type:', response?.type);
-      
+
       if (response?.type === 'success') {
         console.log('Response authentication:', response.authentication);
         if (response.authentication?.accessToken) {
@@ -58,7 +58,7 @@ export const useAuth = () => {
   const handleOAuthCallback = async (code: string) => {
     try {
       setIsAuthenticating(true);
-      
+
       // Exchange code for access token
       const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
@@ -82,10 +82,10 @@ export const useAuth = () => {
 
       // Get user info and proceed with login
       await handleGoogleSignInSuccess(tokenData.access_token);
-      
+
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
-      
+
     } catch (error) {
       console.error('Error handling OAuth callback:', error);
       Alert.alert('Login failed', 'Failed to complete authentication.');
@@ -98,21 +98,21 @@ export const useAuth = () => {
     const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to fetch user info from Google');
     }
-    
+
     return response.json();
   };
 
   const saveUserToDatabase = async (userInfo: any) => {
     const googleId = `google_${userInfo.id}`;
-    
+
     // Check if user exists
     const { data: existingUser, error: checkError } = await supabase
       .rpc('check_user_exists', { google_id_param: googleId });
-    
+
     if (checkError) {
       console.error('Error checking user:', checkError);
       throw new Error('Failed to check user existence');
@@ -125,11 +125,11 @@ export const useAuth = () => {
 
     // Create new user
     const { data: newUser, error: createError } = await supabase
-      .rpc('create_user_if_not_exists', { 
+      .rpc('create_user_if_not_exists', {
         google_id_param: googleId,
-        nickname_param: null 
+        nickname_param: null
       });
-    
+
     if (createError) {
       console.error('Error creating user:', createError);
       throw new Error('Failed to create user');
@@ -142,7 +142,7 @@ export const useAuth = () => {
   const handleGoogleSignInSuccess = async (accessToken: string) => {
     try {
       setLoading(true);
-      
+
       // Get user info from Google
       const userInfo = await getGoogleUserInfo(accessToken);
 
@@ -160,9 +160,9 @@ export const useAuth = () => {
 
       // Save session
       await saveSession(sessionData);
-      
+
       Alert.alert('Success!', 'You have been logged in successfully.');
-      
+
     } catch (error) {
       console.error('Error during sign in:', error);
       Alert.alert('Login failed', 'An error occurred during login.');
@@ -187,4 +187,4 @@ export const useAuth = () => {
     logout: handleSignOut,
     isAuthenticated: !!session,
   };
-}; 
+};

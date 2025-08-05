@@ -10,20 +10,20 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from 'react-native';
-import Theme from './theme';
-import { CrossPlatformPressableStateCallbackType } from './types';
-import Logo from './icons/Logo';
-import BurgerIcon from './icons/BurgerIcon';
-import { useAuth } from './hooks/useAuth';
-import { useResponsiveMenu } from './hooks/useResponsiveMenu';
-import { MENU_OPTIONS, MOBILE_BREAKPOINT } from './constants';
+import Theme from '../../theme';
+import { CrossPlatformPressableStateCallbackType } from '../../types';
+import Logo from '../../../icons/Logo';
+import BurgerIcon from '../../../icons/BurgerIcon';
+import { useAuth } from '../../hooks/useAuth';
+import { useResponsiveMenu } from '../../hooks/useResponsiveMenu';
+import { MENU_OPTIONS, MOBILE_BREAKPOINT } from '../../constants';
 
 function TopMenu() {
   const { session, loading, login, logout, isAuthenticated } = useAuth();
   const { windowWidth, menuOpen, toggleMenu, closeMenu } = useResponsiveMenu();
-  
 
-  
+
+
   const isMobile = windowWidth < MOBILE_BREAKPOINT;
 
   function renderMenuItems(vertical = false) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native';
 
-export default function HomeScreen() {
+export default function Home() {
   return (
     <ScrollView contentContainerStyle={styles.contentContainer} style={{ flex: 1 }}>
       <View style={styles.article}>
@@ -46,4 +46,4 @@ const styles = StyleSheet.create({
     color: '#666666',
     textAlign: 'justify',
   },
-}); 
+});

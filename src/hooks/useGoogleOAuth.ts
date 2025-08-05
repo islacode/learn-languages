@@ -29,7 +29,7 @@ export const useGoogleOAuth = () => {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      
+
       if (Platform.OS === 'web') {
         // For web, use a direct redirect to avoid popup issues
         const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
@@ -39,7 +39,7 @@ export const useGoogleOAuth = () => {
           `scope=${encodeURIComponent('openid profile email')}&` +
           `access_type=offline&` +
           `prompt=consent`;
-        
+
         window.location.href = authUrl;
       } else {
         // For mobile, use the normal Expo AuthSession flow
@@ -58,4 +58,4 @@ export const useGoogleOAuth = () => {
     handleGoogleSignIn,
     response,
   };
-}; 
+};

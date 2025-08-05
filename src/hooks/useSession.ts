@@ -39,7 +39,7 @@ export const useSession = () => {
   const checkExistingSession = async () => {
     try {
       let sessionData: string | null = null;
-      
+
       if (Platform.OS === 'web') {
         sessionData = getCookie(USER_SESSION_COOKIE);
       } else {
@@ -48,12 +48,12 @@ export const useSession = () => {
 
       if (sessionData) {
         const session = JSON.parse(sessionData);
-        
+
         // Check if session is expired (60 minutes)
         const now = Date.now();
         const lastActivity = session.lastActivity || 0;
         const timeDiff = now - lastActivity;
-        
+
         if (timeDiff > SESSION_TIMEOUT_MILLISECONDS) { // 60 minutes
           // Session expired, clear it
           if (Platform.OS === 'web') {
@@ -110,4 +110,4 @@ export const useSession = () => {
     clearSession,
     handleSignOut,
   };
-}; 
+};

@@ -31,4 +31,4 @@ export const useResponsiveMenu = () => {
     toggleMenu,
     closeMenu,
   };
-}; 
+};
