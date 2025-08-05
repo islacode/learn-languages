@@ -1,33 +1,33 @@
 export default ({ config }) => {
   return {
     ...config,
-    name: "learn-languages",
-    slug: "learn-languages",
-    version: "1.0.0",
-    orientation: "portrait",
-    icon: "./assets/icon.png",
-    userInterfaceStyle: "light",
+    name: 'learn-languages',
+    slug: 'learn-languages',
+    version: '1.0.0',
+    orientation: 'portrait',
+    icon: './assets/icon.png',
+    userInterfaceStyle: 'light',
     newArchEnabled: true,
-    scheme: "learn-languages",
+    scheme: 'learn-languages',
     splash: {
-      image: "./assets/splash-icon.png",
-      resizeMode: "contain",
-      backgroundColor: "#ffffff"
+      image: './assets/splash-icon.png',
+      resizeMode: 'contain',
+      backgroundColor: '#ffffff',
     },
     ios: {
-      bundleIdentifier: "com.islacode.learnlanguages",
-      supportsTablet: true
+      bundleIdentifier: 'com.islacode.learnlanguages',
+      supportsTablet: true,
     },
     android: {
-      package: "com.islacode.learnlanguages",
+      package: 'com.islacode.learnlanguages',
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
-        backgroundColor: "#ffffff"
+        foregroundImage: './assets/adaptive-icon.png',
+        backgroundColor: '#ffffff',
       },
-      edgeToEdgeEnabled: true
+      edgeToEdgeEnabled: true,
     },
     web: {
-      favicon: "./assets/favicon.png"
+      favicon: './assets/favicon.png',
     },
     extra: {
       GOOGLE_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID,

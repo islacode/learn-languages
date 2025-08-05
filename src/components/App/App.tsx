@@ -2,10 +2,10 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import TopMenu from './TopMenu';
-import HomeScreen from './HomeScreen';
-import Footer from './Footer';
-import linking from './navigation';
+import TopMenu from '../TopMenu/TopMenu';
+import Home from '../../pages/Home/Home';
+import Footer from '../Footer/Footer';
+import linking from '../../navigation';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -24,7 +24,7 @@ export default function App() {
               headerShown: false,
             }}
           >
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Home" component={Home} />
           </Stack.Navigator>
           <Footer />
         </SafeAreaView>

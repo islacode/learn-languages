@@ -10,20 +10,18 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from 'react-native';
-import Theme from './theme';
-import { CrossPlatformPressableStateCallbackType } from './types';
-import Logo from './icons/Logo';
-import BurgerIcon from './icons/BurgerIcon';
-import { useAuth } from './hooks/useAuth';
-import { useResponsiveMenu } from './hooks/useResponsiveMenu';
-import { MENU_OPTIONS, MOBILE_BREAKPOINT } from './constants';
+import Theme from '../../theme';
+import { CrossPlatformPressableStateCallbackType } from '../../types';
+import Logo from '../../../icons/Logo';
+import BurgerIcon from '../../../icons/BurgerIcon';
+import { useAuth } from '../../hooks/useAuth';
+import { useResponsiveMenu } from '../../hooks/useResponsiveMenu';
+import { MENU_OPTIONS, MOBILE_BREAKPOINT } from '../../constants';
 
 function TopMenu() {
-  const { session, loading, login, logout, isAuthenticated } = useAuth();
+  const { loading, login, logout, isAuthenticated } = useAuth();
   const { windowWidth, menuOpen, toggleMenu, closeMenu } = useResponsiveMenu();
-  
 
-  
   const isMobile = windowWidth < MOBILE_BREAKPOINT;
 
   function renderMenuItems(vertical = false) {
@@ -65,17 +63,11 @@ function TopMenu() {
           {loading ? (
             <ActivityIndicator size="small" color="white" />
           ) : isAuthenticated ? (
-                      <Pressable
-            style={styles.signOutButton}
-            onPress={handleAuthPress}
-          >
+            <Pressable style={styles.signOutButton} onPress={handleAuthPress}>
               <Text style={styles.signOutButtonText}>Sign Out</Text>
             </Pressable>
           ) : (
-            <TouchableOpacity
-              style={styles.googleButton}
-              onPress={handleAuthPress}
-            >
+            <TouchableOpacity style={styles.googleButton} onPress={handleAuthPress}>
               <View style={styles.buttonContent}>
                 <View style={styles.googleIcon}>
                   <Text style={styles.googleIconText}>G</Text>
@@ -86,12 +78,7 @@ function TopMenu() {
           )}
         </View>
         {/* Mobile menu modal */}
-        <Modal
-          visible={menuOpen}
-          transparent
-          animationType="fade"
-                      onRequestClose={closeMenu}
-        >
+        <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={closeMenu}>
           <TouchableWithoutFeedback onPress={closeMenu}>
             <View style={styles.modalOverlay} />
           </TouchableWithoutFeedback>
@@ -114,17 +101,11 @@ function TopMenu() {
         {loading ? (
           <ActivityIndicator size="small" color="white" />
         ) : isAuthenticated ? (
-          <Pressable
-            style={styles.signOutButton}
-            onPress={handleAuthPress}
-          >
+          <Pressable style={styles.signOutButton} onPress={handleAuthPress}>
             <Text style={styles.signOutButtonText}>Sign Out</Text>
           </Pressable>
         ) : (
-          <TouchableOpacity
-            style={styles.googleButton}
-            onPress={handleAuthPress}
-          >
+          <TouchableOpacity style={styles.googleButton} onPress={handleAuthPress}>
             <View style={styles.buttonContent}>
               <View style={styles.googleIcon}>
                 <Text style={styles.googleIconText}>G</Text>

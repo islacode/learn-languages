@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Platform } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
-
+import { PromptMethod } from 'expo-auth-session';
 
 export const useGoogleOAuth = () => {
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ export const useGoogleOAuth = () => {
   }, []);
 
   // Google OAuth configuration with proper parameters
-  const [request, response, promptAsync] = Google.useAuthRequest({
+  const [response, promptAsync] = Google.useAuthRequest({
     clientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID!,
     iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID!,
     androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID!,
@@ -29,21 +29,22 @@ export const useGoogleOAuth = () => {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      
+
       if (Platform.OS === 'web') {
         // For web, use a direct redirect to avoid popup issues
-        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        const authUrl =
+          `https://accounts.google.com/o/oauth2/v2/auth?` +
           `client_id=${process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID}&` +
           `redirect_uri=${encodeURIComponent(redirectUrl)}&` +
           `response_type=code&` +
           `scope=${encodeURIComponent('openid profile email')}&` +
           `access_type=offline&` +
           `prompt=consent`;
-        
+
         window.location.href = authUrl;
       } else {
         // For mobile, use the normal Expo AuthSession flow
-        await promptAsync();
+        await (promptAsync as unknown as PromptMethod)();
       }
     } catch (error) {
       console.error('Error initiating Google sign in:', error);
@@ -58,4 +59,4 @@ export const useGoogleOAuth = () => {
     handleGoogleSignIn,
     response,
   };
-}; 
+};
