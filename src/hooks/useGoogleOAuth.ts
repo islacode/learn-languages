@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import { Platform } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
 
-
 export const useGoogleOAuth = () => {
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +31,8 @@ export const useGoogleOAuth = () => {
 
       if (Platform.OS === 'web') {
         // For web, use a direct redirect to avoid popup issues
-        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        const authUrl =
+          `https://accounts.google.com/o/oauth2/v2/auth?` +
           `client_id=${process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID}&` +
           `redirect_uri=${encodeURIComponent(redirectUrl)}&` +
           `response_type=code&` +

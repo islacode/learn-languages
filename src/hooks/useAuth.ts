@@ -4,7 +4,6 @@ import { supabase } from '../supabase';
 import { useGoogleOAuth } from './useGoogleOAuth';
 import { useSession } from './useSession';
 
-
 interface UserSession {
   id: string;
   googleId: string;
@@ -85,7 +84,6 @@ export const useAuth = () => {
 
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
-
     } catch (error) {
       console.error('Error handling OAuth callback:', error);
       Alert.alert('Login failed', 'Failed to complete authentication.');
@@ -110,8 +108,9 @@ export const useAuth = () => {
     const googleId = `google_${userInfo.id}`;
 
     // Check if user exists
-    const { data: existingUser, error: checkError } = await supabase
-      .rpc('check_user_exists', { google_id_param: googleId });
+    const { data: existingUser, error: checkError } = await supabase.rpc('check_user_exists', {
+      google_id_param: googleId,
+    });
 
     if (checkError) {
       console.error('Error checking user:', checkError);
@@ -124,11 +123,10 @@ export const useAuth = () => {
     }
 
     // Create new user
-    const { data: newUser, error: createError } = await supabase
-      .rpc('create_user_if_not_exists', {
-        google_id_param: googleId,
-        nickname_param: null
-      });
+    const { data: newUser, error: createError } = await supabase.rpc('create_user_if_not_exists', {
+      google_id_param: googleId,
+      nickname_param: null,
+    });
 
     if (createError) {
       console.error('Error creating user:', createError);
@@ -162,7 +160,6 @@ export const useAuth = () => {
       await saveSession(sessionData);
 
       Alert.alert('Success!', 'You have been logged in successfully.');
-
     } catch (error) {
       console.error('Error during sign in:', error);
       Alert.alert('Login failed', 'An error occurred during login.');

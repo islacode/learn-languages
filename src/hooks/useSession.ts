@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Platform, Alert } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-import { SESSION_TIMEOUT_MINUTES, SESSION_TIMEOUT_MILLISECONDS, USER_SESSION_COOKIE } from '../constants';
+import {
+  SESSION_TIMEOUT_MINUTES,
+  SESSION_TIMEOUT_MILLISECONDS,
+  USER_SESSION_COOKIE,
+} from '../constants';
 
 interface UserSession {
   id: string;
@@ -22,7 +26,7 @@ export const useSession = () => {
   };
 
   const getCookie = (name: string): string | null => {
-    const nameEQ = name + "=";
+    const nameEQ = name + '=';
     const ca = document.cookie.split(';');
     for (let i = 0; i < ca.length; i++) {
       let c = ca[i];
@@ -54,7 +58,8 @@ export const useSession = () => {
         const lastActivity = session.lastActivity || 0;
         const timeDiff = now - lastActivity;
 
-        if (timeDiff > SESSION_TIMEOUT_MILLISECONDS) { // 60 minutes
+        if (timeDiff > SESSION_TIMEOUT_MILLISECONDS) {
+          // 60 minutes
           // Session expired, clear it
           if (Platform.OS === 'web') {
             deleteCookie(USER_SESSION_COOKIE);

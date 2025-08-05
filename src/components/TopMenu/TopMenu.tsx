@@ -22,8 +22,6 @@ function TopMenu() {
   const { session, loading, login, logout, isAuthenticated } = useAuth();
   const { windowWidth, menuOpen, toggleMenu, closeMenu } = useResponsiveMenu();
 
-
-
   const isMobile = windowWidth < MOBILE_BREAKPOINT;
 
   function renderMenuItems(vertical = false) {
@@ -65,17 +63,11 @@ function TopMenu() {
           {loading ? (
             <ActivityIndicator size="small" color="white" />
           ) : isAuthenticated ? (
-                      <Pressable
-            style={styles.signOutButton}
-            onPress={handleAuthPress}
-          >
+            <Pressable style={styles.signOutButton} onPress={handleAuthPress}>
               <Text style={styles.signOutButtonText}>Sign Out</Text>
             </Pressable>
           ) : (
-            <TouchableOpacity
-              style={styles.googleButton}
-              onPress={handleAuthPress}
-            >
+            <TouchableOpacity style={styles.googleButton} onPress={handleAuthPress}>
               <View style={styles.buttonContent}>
                 <View style={styles.googleIcon}>
                   <Text style={styles.googleIconText}>G</Text>
@@ -86,12 +78,7 @@ function TopMenu() {
           )}
         </View>
         {/* Mobile menu modal */}
-        <Modal
-          visible={menuOpen}
-          transparent
-          animationType="fade"
-                      onRequestClose={closeMenu}
-        >
+        <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={closeMenu}>
           <TouchableWithoutFeedback onPress={closeMenu}>
             <View style={styles.modalOverlay} />
           </TouchableWithoutFeedback>
@@ -114,17 +101,11 @@ function TopMenu() {
         {loading ? (
           <ActivityIndicator size="small" color="white" />
         ) : isAuthenticated ? (
-          <Pressable
-            style={styles.signOutButton}
-            onPress={handleAuthPress}
-          >
+          <Pressable style={styles.signOutButton} onPress={handleAuthPress}>
             <Text style={styles.signOutButtonText}>Sign Out</Text>
           </Pressable>
         ) : (
-          <TouchableOpacity
-            style={styles.googleButton}
-            onPress={handleAuthPress}
-          >
+          <TouchableOpacity style={styles.googleButton} onPress={handleAuthPress}>
             <View style={styles.buttonContent}>
               <View style={styles.googleIcon}>
                 <Text style={styles.googleIconText}>G</Text>
