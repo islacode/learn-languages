@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import { Platform, Alert } from 'react-native';
 import { supabase } from '../supabase';
 import { useGoogleOAuth } from './useGoogleOAuth';
@@ -12,158 +13,81 @@ interface UserSession {
   lastActivity: number;
 }
 
-export const useAuth = () => {
-  const { loading, setLoading, handleGoogleSignIn, response } = useGoogleOAuth();
+export interface GoogleClaims {
+  sub: string;
+  email?: string;
+  name?: string;
+  picture?: string
+};
+
+function decodeJwtPayload(jwt: string): GoogleClaims {
+  return jwtDecode<GoogleClaims>(jwt);
+}
+
+export function useAuth() {
+  const { loading, setLoading, handleGoogleSignIn, response, request } = useGoogleOAuth();
   const { session, saveSession, handleSignOut } = useSession();
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-  // Handle OAuth callback for web redirect flow
-  useEffect(() => {
-    if (Platform.OS === 'web') {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      const error = urlParams.get('error');
-
-      if (code) {
-        handleOAuthCallback(code);
-      } else if (error) {
-        console.error('OAuth error:', error);
-        Alert.alert('Login failed', 'OAuth authentication failed.');
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Handle Expo AuthSession response (only for mobile)
-  useEffect(() => {
-    if (Platform.OS !== 'web' && response) {
-      console.log('OAuth response received:', response);
-      console.log('Response type:', response?.type);
-
-      if (response?.type === 'success') {
-        console.log('Response authentication:', response.authentication);
-        if (response.authentication?.accessToken) {
-          console.log('Processing successful OAuth response');
-          handleGoogleSignInSuccess(response.authentication.accessToken);
-        }
-      } else if (response?.type === 'error') {
-        console.error('OAuth error:', response.error);
-        Alert.alert('Login failed', 'OAuth authentication failed.');
-      } else if (response?.type === 'cancel') {
-        console.log('OAuth cancelled by user');
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const idToken = useMemo(() => {
+    if (!response) return undefined;
+    if (Platform.OS === 'web') return (response as any)?.params?.id_token;
+    return (response as any)?.authentication?.idToken;
   }, [response]);
 
-  const handleOAuthCallback = async (code: string) => {
-    try {
-      setIsAuthenticating(true);
-
-      // Exchange code for access token
-      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          client_id: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID!,
-          client_secret: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_SECRET!,
-          code: code,
-          grant_type: 'authorization_code',
-          redirect_uri: `${window.location.origin}${process.env.EXPO_PUBLIC_AUTH_REDIRECT_URL}`,
-        }),
-      });
-
-      if (!tokenResponse.ok) {
-        throw new Error('Failed to exchange code for token');
+  useEffect(() => {
+    const go = async () => {
+      if (!response) return;
+      if (response.type === 'success' && idToken) {
+        await handleGoogleSignInSuccess(idToken);
+      } else if (response.type === 'error') {
+        console.error('OAuth error:', response.error);
+        Alert.alert('Login failed', 'OAuth authentication failed.');
+      } else if (response.type === 'cancel' || response.type === 'dismiss') {
+        console.log('OAuth flow cancelled/dismissed');
       }
+    };
+    go();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response, idToken]);
 
-      const tokenData = await tokenResponse.json();
-
-      // Get user info and proceed with login
-      await handleGoogleSignInSuccess(tokenData.access_token);
-
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } catch (error) {
-      console.error('Error handling OAuth callback:', error);
-      Alert.alert('Login failed', 'Failed to complete authentication.');
-    } finally {
-      setIsAuthenticating(false);
-    }
-  };
-
-  const getGoogleUserInfo = async (accessToken: string) => {
-    const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch user info from Google');
-    }
-
-    return response.json();
-  };
-
-  const saveUserToDatabase = async (userInfo: any) => {
-    const googleId = `google_${userInfo.id}`;
-
-    // Check if user exists
-    const { data: existingUser, error: checkError } = await supabase.rpc('check_user_exists', {
-      google_id_param: googleId,
-    });
-
-    if (checkError) {
-      console.error('Error checking user:', checkError);
-      throw new Error('Failed to check user existence');
-    }
-
-    if (existingUser) {
-      console.log('User already exists:', existingUser);
-      return existingUser;
-    }
-
-    // Create new user
-    const { data: newUser, error: createError } = await supabase.rpc('create_user_if_not_exists', {
-      google_id_param: googleId,
-      nickname_param: null,
-    });
-
-    if (createError) {
-      console.error('Error creating user:', createError);
-      throw new Error('Failed to create user');
-    }
-
-    console.log('User saved to database:', newUser);
-    return newUser;
-  };
-
-  const handleGoogleSignInSuccess = async (accessToken: string) => {
+  const handleGoogleSignInSuccess = async (idToken: string) => {
     try {
       setLoading(true);
+      const claims = decodeJwtPayload(idToken);
+      const googleId = `google_${claims.sub}`;
 
-      // Get user info from Google
-      const userInfo = await getGoogleUserInfo(accessToken);
+      // Persist user in DB via existing RPCs
+      const { data: existingUser, error: checkError } = await supabase.rpc('check_user_exists', {
+        google_id_param: googleId,
+      });
+      if (checkError) {
+        throw checkError;
+      }
 
-      // Save user to database
-      const savedUser = await saveUserToDatabase(userInfo);
+      let user = existingUser;
+      if (!user) {
+        const { data: newUser, error: createError } = await supabase.rpc('create_user_if_not_exists', {
+          google_id_param: googleId,
+          nickname_param: null,
+        });
+        if (createError) {
+          throw createError;
+        }
+        user = newUser;
+      }
 
-      // Create session
       const sessionData: UserSession = {
-        id: savedUser.id,
-        googleId: savedUser.google_id,
-        nickname: savedUser.nickname,
-        email: userInfo.email,
+        id: user.id,
+        googleId: user.google_id,
+        nickname: user.nickname,
+        email: claims.email,
         lastActivity: Date.now(),
       };
-
-      // Save session
       await saveSession(sessionData);
 
       Alert.alert('Success!', 'You have been logged in successfully.');
-    } catch (error) {
-      console.error('Error during sign in:', error);
+    } catch (e) {
+      console.error('Error during sign in:', e);
       Alert.alert('Login failed', 'An error occurred during login.');
     } finally {
       setLoading(false);
@@ -171,6 +95,10 @@ export const useAuth = () => {
   };
 
   const login = async () => {
+    if (!request) {
+      console.warn('Auth request not ready yet');
+      return;
+    }
     try {
       await handleGoogleSignIn();
     } catch (error) {
@@ -181,9 +109,10 @@ export const useAuth = () => {
 
   return {
     session,
-    loading: loading || isAuthenticating,
+    loading,
+    canLogin: !!request && !loading,
     login,
     logout: handleSignOut,
     isAuthenticated: !!session,
   };
-};
+}

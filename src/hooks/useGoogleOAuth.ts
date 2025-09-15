@@ -1,55 +1,56 @@
 import { useState, useMemo } from 'react';
-import { Platform } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
-import { PromptMethod } from 'expo-auth-session';
+import { makeRedirectUri } from 'expo-auth-session';
+import type { AuthRequest, AuthSessionResult } from 'expo-auth-session';
+import { Platform } from 'react-native';
 
-export const useGoogleOAuth = () => {
+export interface UseGoogleOAuthReturn {
+  loading: boolean;
+  setLoading: (v: boolean) => void;
+  handleGoogleSignIn: () => Promise<void>;
+  request: AuthRequest | null;
+  response: AuthSessionResult | null;
+}
+
+export function useGoogleOAuth(): UseGoogleOAuthReturn {
   const [loading, setLoading] = useState(false);
+  const [isWeb] = useState(Platform.OS === 'web');
 
-  // Build redirect URL dynamically
-  const redirectUrl = useMemo(() => {
-    if (Platform.OS === 'web') {
-      return `${window.location.origin}${process.env.EXPO_PUBLIC_AUTH_REDIRECT_URL}`;
-    } else {
-      return `learn-languages:/${process.env.EXPO_PUBLIC_AUTH_REDIRECT_URL}`;
-    }
-  }, []);
+  const redirectUri = useMemo(
+    () =>
+      makeRedirectUri({
+        // Optionally set a consistent path if you configured one in Google Console
+        path: process.env.EXPO_PUBLIC_AUTH_REDIRECT_PATH ?? 'auth/callback',
+      }),
+    []
+  );
 
   // Google OAuth configuration with proper parameters
-  const [response, promptAsync] = Google.useAuthRequest({
-    clientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID!,
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    // clientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID!,
     iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID!,
     androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID!,
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID!,
-    redirectUri: redirectUrl,
-    // Google OAuth best practices
+    ...(isWeb && { redirectUri, responseType: 'id_token' }),
     scopes: ['openid', 'profile', 'email'],
+    selectAccount: true,
   });
 
   const handleGoogleSignIn = async () => {
+    if (!request) {
+      // Optional: log or toast for debugging/UX
+      console.warn('Auth request not ready yet');
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      setLoading(true);
-
-      if (Platform.OS === 'web') {
-        // For web, use a direct redirect to avoid popup issues
-        const authUrl =
-          `https://accounts.google.com/o/oauth2/v2/auth?` +
-          `client_id=${process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID}&` +
-          `redirect_uri=${encodeURIComponent(redirectUrl)}&` +
-          `response_type=code&` +
-          `scope=${encodeURIComponent('openid profile email')}&` +
-          `access_type=offline&` +
-          `prompt=consent`;
-
-        window.location.href = authUrl;
-      } else {
-        // For mobile, use the normal Expo AuthSession flow
-        await (promptAsync as unknown as PromptMethod)();
-      }
-    } catch (error) {
-      console.error('Error initiating Google sign in:', error);
+      await promptAsync({
+        showInRecents: true,
+      });
+    } finally {
       setLoading(false);
-      throw error;
     }
   };
 
@@ -57,6 +58,7 @@ export const useGoogleOAuth = () => {
     loading,
     setLoading,
     handleGoogleSignIn,
+    request,
     response,
   };
 };
