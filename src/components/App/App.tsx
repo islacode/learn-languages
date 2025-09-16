@@ -6,6 +6,8 @@ import TopMenu from '../TopMenu/TopMenu';
 import Home from '../../pages/Home/Home';
 import Footer from '../Footer/Footer';
 import linking from '../../navigation';
+import * as WebBrowser from 'expo-web-browser';
+WebBrowser.maybeCompleteAuthSession();
 
 export type RootStackParamList = {
   Home: undefined;

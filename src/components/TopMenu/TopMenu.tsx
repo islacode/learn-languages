@@ -19,7 +19,7 @@ import { useResponsiveMenu } from '../../hooks/useResponsiveMenu';
 import { MENU_OPTIONS, MOBILE_BREAKPOINT } from '../../constants';
 
 function TopMenu() {
-  const { loading, login, logout, isAuthenticated } = useAuth();
+  const { loading, login, logout, isAuthenticated, canLogin } = useAuth();
   const { windowWidth, menuOpen, toggleMenu, closeMenu } = useResponsiveMenu();
 
   const isMobile = windowWidth < MOBILE_BREAKPOINT;
@@ -43,6 +43,11 @@ function TopMenu() {
     if (isAuthenticated) {
       logout();
     } else {
+      if (!canLogin) {
+        // Optional: toast/log for UX
+        console.warn('Login not ready yet');
+        return;
+      }
       login();
     }
   };
@@ -67,7 +72,12 @@ function TopMenu() {
               <Text style={styles.signOutButtonText}>Sign Out</Text>
             </Pressable>
           ) : (
-            <TouchableOpacity style={styles.googleButton} onPress={handleAuthPress}>
+            <TouchableOpacity
+              style={[styles.googleButton, !canLogin && styles.googleButtonDisabled]}
+              onPress={handleAuthPress}
+              disabled={!canLogin}
+              accessibilityState={{ disabled: !canLogin }}
+            >
               <View style={styles.buttonContent}>
                 <View style={styles.googleIcon}>
                   <Text style={styles.googleIconText}>G</Text>
@@ -105,7 +115,12 @@ function TopMenu() {
             <Text style={styles.signOutButtonText}>Sign Out</Text>
           </Pressable>
         ) : (
-          <TouchableOpacity style={styles.googleButton} onPress={handleAuthPress}>
+          <TouchableOpacity
+            style={[styles.googleButton, !canLogin && styles.googleButtonDisabled]}
+            onPress={handleAuthPress}
+            disabled={!canLogin}
+            accessibilityState={{ disabled: !canLogin }}
+          >
             <View style={styles.buttonContent}>
               <View style={styles.googleIcon}>
                 <Text style={styles.googleIconText}>G</Text>
@@ -256,6 +271,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     minWidth: 240,
     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+  },
+  googleButtonDisabled: {
+    opacity: 0.5,
   },
   buttonContent: {
     flexDirection: 'row',

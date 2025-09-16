@@ -8,7 +8,7 @@ export default ({ config }) => {
     icon: './assets/icon.png',
     userInterfaceStyle: 'light',
     newArchEnabled: true,
-    scheme: 'learn-languages',
+    scheme: 'com.islacode.learnlanguages',
     splash: {
       image: './assets/splash-icon.png',
       resizeMode: 'contain',

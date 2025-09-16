@@ -20,9 +20,9 @@ export const useSession = () => {
 
   // Cookie utilities for web
   const setCookie = (name: string, value: string, minutes: number) => {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + minutes * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Strict`;
+    const expires = new Date(Date.now() + minutes * 60 * 1000);
+    const secure = window.location.protocol === 'https:' ? ';Secure' : '';
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Strict${secure}`;
   };
 
   const getCookie = (name: string): string | null => {
@@ -42,35 +42,31 @@ export const useSession = () => {
 
   const checkExistingSession = async () => {
     try {
-      let sessionData: string | null = null;
-
       if (Platform.OS === 'web') {
-        sessionData = getCookie(USER_SESSION_COOKIE);
-      } else {
-        sessionData = await SecureStore.getItemAsync(USER_SESSION_COOKIE);
-      }
-
-      if (sessionData) {
-        const session = JSON.parse(sessionData);
-
-        // Check if session is expired (60 minutes)
+        const raw = getCookie(USER_SESSION_COOKIE);
+        if (!raw) return;
+        const session = JSON.parse(decodeURIComponent(raw)) as UserSession;
+        // expiration check below
         const now = Date.now();
         const lastActivity = session.lastActivity || 0;
-        const timeDiff = now - lastActivity;
-
-        if (timeDiff > SESSION_TIMEOUT_MILLISECONDS) {
-          // 60 minutes
-          // Session expired, clear it
-          if (Platform.OS === 'web') {
-            deleteCookie(USER_SESSION_COOKIE);
-          } else {
-            await SecureStore.deleteItemAsync(USER_SESSION_COOKIE);
-          }
+        if (now - lastActivity > SESSION_TIMEOUT_MILLISECONDS) {
+          deleteCookie(USER_SESSION_COOKIE);
           return;
         }
-
         setSession(session);
+        return;
       }
+
+      const raw = await SecureStore.getItemAsync(USER_SESSION_COOKIE);
+      if (!raw) return;
+      const session = JSON.parse(raw) as UserSession;
+      const now = Date.now();
+      const lastActivity = session.lastActivity || 0;
+      if (now - lastActivity > SESSION_TIMEOUT_MILLISECONDS) {
+        await SecureStore.deleteItemAsync(USER_SESSION_COOKIE);
+        return;
+      }
+      setSession(session);
     } catch (error) {
       console.error('Error checking session:', error);
     }
@@ -78,7 +74,7 @@ export const useSession = () => {
 
   const saveSession = async (sessionData: UserSession) => {
     if (Platform.OS === 'web') {
-      setCookie(USER_SESSION_COOKIE, JSON.stringify(sessionData), SESSION_TIMEOUT_MINUTES);
+      setCookie(USER_SESSION_COOKIE, encodeURIComponent(JSON.stringify(sessionData)), SESSION_TIMEOUT_MINUTES);
     } else {
       await SecureStore.setItemAsync(USER_SESSION_COOKIE, JSON.stringify(sessionData));
     }
