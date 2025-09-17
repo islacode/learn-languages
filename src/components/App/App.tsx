@@ -2,10 +2,10 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import TopMenu from '../TopMenu/TopMenu';
-import Home from '../../pages/Home/Home';
-import Footer from '../Footer/Footer';
-import linking from '../../navigation';
+import TopMenu from '@/components/TopMenu/TopMenu';
+import Home from '@/pages/Home/Home';
+import Footer from '@/components/Footer/Footer';
+import linking from '@/navigation';
 import * as WebBrowser from 'expo-web-browser';
 WebBrowser.maybeCompleteAuthSession();
 
