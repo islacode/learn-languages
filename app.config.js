@@ -5,18 +5,19 @@ export default ({ config }) => {
     slug: 'learn-languages',
     version: '1.0.0',
     orientation: 'portrait',
-    icon: './assets/icon.png',
+    "icon": "./assets/android-chrome-192x192.png",
     userInterfaceStyle: 'light',
     newArchEnabled: true,
     scheme: 'com.islacode.learnlanguages',
     splash: {
-      image: './assets/splash-icon.png',
+      "image": "./assets/android-chrome-512x512.png",
       resizeMode: 'contain',
       backgroundColor: '#ffffff',
     },
     ios: {
       bundleIdentifier: 'com.islacode.learnlanguages',
       supportsTablet: true,
+      icon: './assets/android-chrome-192x192.png',
     },
     android: {
       package: 'com.islacode.learnlanguages',
@@ -24,10 +25,11 @@ export default ({ config }) => {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff',
       },
+      icon: './assets/android-chrome-192x192.png',
       edgeToEdgeEnabled: true,
     },
     web: {
-      favicon: './assets/favicon.png',
+      favicon: './assets/favicon-32x32.png',
     },
     extra: {
       GOOGLE_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID,
