@@ -1,39 +1,44 @@
 import React from 'react';
 import Svg, { Path, G, Ellipse } from 'react-native-svg';
 
-function Logo({ size = 36 }) {
+export interface LogoProps {
+  width?: number;
+  height?: number;
+}
+
+function Logo({ width = 64, height = 64 }: LogoProps) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+    <Svg width={width} height={height} viewBox="0 0 64 64" fill="none">
       {/* Speech Bubble */}
       <Path
-        d="M12 16a6 6 0 0 1 6-6h28a6 6 0 0 1 6 6v16a6 6 0 0 1-6 6H28l-8 8v-8h-2a6 6 0 0 1-6-6V16z"
+        d="M8 10a8 8 0 0 1 8-8h32a8 8 0 0 1 8 8v22a8 8 0 0 1-8 8H32l-10 10v-10h-6a8 8 0 0 1-8-8V10z"
         stroke="white"
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
       />
-      <G transform="translate(24.3, 14.95)">
+      <G transform="translate(20, 8) scale(0.65)">
         <Ellipse
-          cx="11.75"
-          cy="9.5"
-          rx="11.75"
-          ry="9.5"
+          cx="24"
+          cy="20"
+          rx="24"
+          ry="20"
           stroke="white"
-          strokeWidth={2}
+          strokeWidth={3}
           fill="none"
         />
-        <Path d="M0 9.5h23.5" stroke="white" strokeWidth={2} strokeLinecap="round" />
-        <Path d="M11.75 0v19" stroke="white" strokeWidth={2} strokeLinecap="round" />
+        <Path d="M0 20h48" stroke="white" strokeWidth={2} strokeLinecap="round" />
+        <Path d="M24 0v40" stroke="white" strokeWidth={2} strokeLinecap="round" />
         <Path
-          d="M5.875 2.5c1 1 1 12 0 14"
+          d="M12 5c2 2 2 30 0 30"
           stroke="white"
           strokeWidth={2}
           strokeLinecap="round"
           fill="none"
         />
         <Path
-          d="M17.625 2.5c-1 1-1 12 0 14"
+          d="M36 5c-2 2-2 30 0 30"
           stroke="white"
           strokeWidth={2}
           strokeLinecap="round"
