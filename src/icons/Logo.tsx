@@ -13,7 +13,6 @@ function Logo({ size = 36 }) {
         strokeLinejoin="round"
         fill="none"
       />
-      {/* Globe with side vertical curved lines shifted up by 1 pixel */}
       <G transform="translate(24.3, 14.95)">
         <Ellipse
           cx="11.75"
