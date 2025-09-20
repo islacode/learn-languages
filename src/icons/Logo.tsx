@@ -19,15 +19,7 @@ function Logo({ width = 64, height = 64 }: LogoProps) {
         fill="none"
       />
       <G transform="translate(20, 8) scale(0.65)">
-        <Ellipse
-          cx="24"
-          cy="20"
-          rx="24"
-          ry="20"
-          stroke="white"
-          strokeWidth={3}
-          fill="none"
-        />
+        <Ellipse cx="24" cy="20" rx="24" ry="20" stroke="white" strokeWidth={3} fill="none" />
         <Path d="M0 20h48" stroke="white" strokeWidth={2} strokeLinecap="round" />
         <Path d="M24 0v40" stroke="white" strokeWidth={2} strokeLinecap="round" />
         <Path
