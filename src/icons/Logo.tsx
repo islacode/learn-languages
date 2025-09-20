@@ -6,9 +6,9 @@ export interface LogoProps {
   height?: number;
 }
 
-function Logo({ width = 64, height = 64 }: LogoProps) {
+function Logo({ width = 64, height = 51 }: LogoProps) {
   return (
-    <Svg width={width} height={height} viewBox="0 0 64 64" fill="none">
+    <Svg width={width} height={height} viewBox="0 0 64 51" fill="none">
       {/* Speech Bubble */}
       <Path
         d="M8 10a8 8 0 0 1 8-8h32a8 8 0 0 1 8 8v22a8 8 0 0 1-8 8H32l-10 10v-10h-6a8 8 0 0 1-8-8V10z"
