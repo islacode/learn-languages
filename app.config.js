@@ -5,7 +5,7 @@ export default ({ config }) => {
     slug: 'learn-languages',
     version: '1.0.0',
     orientation: 'portrait',
-    icon: './assets/android-chrome-192x192.png',
+    icon: './assets/ios-1024x1024.png',
     userInterfaceStyle: 'light',
     newArchEnabled: true,
     scheme: 'com.islacode.learnlanguages',
@@ -17,7 +17,7 @@ export default ({ config }) => {
     ios: {
       bundleIdentifier: 'com.islacode.learnlanguages',
       supportsTablet: true,
-      icon: './assets/android-chrome-192x192.png',
+      icon: './assets/ios-1024x1024.png',
     },
     android: {
       package: 'com.islacode.learnlanguages',
@@ -25,7 +25,7 @@ export default ({ config }) => {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff',
       },
-      icon: './assets/android-chrome-192x192.png',
+      icon: './assets/ios-1024x1024.png',
       edgeToEdgeEnabled: true,
     },
     web: {
