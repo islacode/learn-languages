@@ -74,7 +74,11 @@ export const useSession = () => {
 
   const saveSession = async (sessionData: UserSession) => {
     if (Platform.OS === 'web') {
-      setCookie(USER_SESSION_COOKIE, encodeURIComponent(JSON.stringify(sessionData)), SESSION_TIMEOUT_MINUTES);
+      setCookie(
+        USER_SESSION_COOKIE,
+        encodeURIComponent(JSON.stringify(sessionData)),
+        SESSION_TIMEOUT_MINUTES,
+      );
     } else {
       await SecureStore.setItemAsync(USER_SESSION_COOKIE, JSON.stringify(sessionData));
     }
