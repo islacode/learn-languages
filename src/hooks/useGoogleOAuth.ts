@@ -22,7 +22,7 @@ export function useGoogleOAuth(): UseGoogleOAuthReturn {
         // Optionally set a consistent path if you configured one in Google Console
         path: process.env.EXPO_PUBLIC_AUTH_REDIRECT_PATH ?? 'auth/callback',
       }),
-    []
+    [],
   );
 
   // Google OAuth configuration with proper parameters
@@ -61,4 +61,4 @@ export function useGoogleOAuth(): UseGoogleOAuthReturn {
     request,
     response,
   };
-};
+}

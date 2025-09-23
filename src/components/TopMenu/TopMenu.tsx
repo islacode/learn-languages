@@ -61,7 +61,7 @@ function TopMenu() {
           </TouchableOpacity>
         </View>
         <View style={styles.mobileCenter}>
-          <Logo size={36} />
+          <Logo width={36} height={36} />
         </View>
         <View style={styles.mobileRight}>
           {loading ? (
@@ -101,7 +101,7 @@ function TopMenu() {
   return (
     <View style={styles.menuContainer}>
       <View style={styles.webLeft}>
-        <Logo size={36} />
+        <Logo />
       </View>
       <View style={styles.webCenter}>
         <View style={styles.menuItemsContainer}>{renderMenuItems(false)}</View>
