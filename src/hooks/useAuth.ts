@@ -17,8 +17,8 @@ export interface GoogleClaims {
   sub: string;
   email?: string;
   name?: string;
-  picture?: string
-};
+  picture?: string;
+}
 
 function decodeJwtPayload(jwt: string): GoogleClaims {
   return jwtDecode<GoogleClaims>(jwt);
@@ -66,10 +66,13 @@ export function useAuth() {
 
       let user = existingUser;
       if (!user) {
-        const { data: newUser, error: createError } = await supabase.rpc('create_user_if_not_exists', {
-          google_id_param: googleId,
-          nickname_param: null,
-        });
+        const { data: newUser, error: createError } = await supabase.rpc(
+          'create_user_if_not_exists',
+          {
+            google_id_param: googleId,
+            nickname_param: null,
+          },
+        );
         if (createError) {
           throw createError;
         }
