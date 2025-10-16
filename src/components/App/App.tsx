@@ -6,6 +6,7 @@ import TopMenu from '@/components/TopMenu/TopMenu';
 import Home from '@/pages/Home/Home';
 import Footer from '@/components/Footer/Footer';
 import linking from '@/navigation';
+import AuthProvider from '@/contexts/AuthContext';
 import * as WebBrowser from 'expo-web-browser';
 WebBrowser.maybeCompleteAuthSession();
 
@@ -18,19 +19,21 @@ const Stack = createStackNavigator<RootStackParamList>();
 export default function App() {
   return (
     <SafeAreaProvider>
-      <NavigationContainer linking={linking}>
-        <SafeAreaView style={{ flex: 1 }}>
-          <TopMenu />
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="Home" component={Home} />
-          </Stack.Navigator>
-          <Footer />
-        </SafeAreaView>
-      </NavigationContainer>
+      <AuthProvider>
+        <NavigationContainer linking={linking}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <TopMenu />
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="Home" component={Home} />
+            </Stack.Navigator>
+            <Footer />
+          </SafeAreaView>
+        </NavigationContainer>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

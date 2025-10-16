@@ -1,19 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Platform, Alert } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-import {
-  SESSION_TIMEOUT_MINUTES,
-  SESSION_TIMEOUT_MILLISECONDS,
-  USER_SESSION_COOKIE,
-} from '../constants';
-
-interface UserSession {
-  id: string;
-  googleId: string;
-  nickname: string | null;
-  email?: string;
-  lastActivity: number;
-}
+import { SESSION_TIMEOUT_MILLISECONDS, SESSION_TIMEOUT_MINUTES, USER_SESSION_COOKIE } from '../constants';
+import { UserSession } from '@/types';
 
 export const useSession = () => {
   const [session, setSession] = useState<UserSession | null>(null);

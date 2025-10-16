@@ -16,9 +16,10 @@ import Logo from '@/icons/Logo';
 import BurgerIcon from '@/icons/BurgerIcon';
 import { useAuth, useResponsiveMenu } from '@/hooks';
 import { MENU_OPTIONS, MOBILE_BREAKPOINT } from '@/constants';
+import { useAuthContext } from '@contexts/AuthContext';
 
 function TopMenu() {
-  const { loading, login, logout, isAuthenticated, canLogin } = useAuth();
+  const { loading, login, logout, isAuthenticated, canLogin } = useAuthContext();
   const { windowWidth, menuOpen, toggleMenu, closeMenu } = useResponsiveMenu();
 
   const isMobile = windowWidth < MOBILE_BREAKPOINT;
